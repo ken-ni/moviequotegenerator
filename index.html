@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Quote Puller</title>
+</head>
+
+<body>
+    <h1>Movie Quote Generator</h1>
+    <p>Using API: <a href="https://api.seriesquotes.10cyrilc.me/docs">Web Series Quotes API</a></p>
+    <br>
+    <div id="movieQuotesInfo"></div>
+    <button id="load-more">Load More Quotes</button>
+
+    <script>
+        const movieQuotesEl = document.getElementById("movieQuotesInfo")
+        const loadMoreBtn = document.getElementById("load-more");
+
+        async function loadSomeMovieQuotes(numberOfQuotes = 1) {
+            const URL = `https://api.seriesquotes.10cyrilc.me/quote/?count=${numberOfQuotes}`;
+            let json;
+
+            try {
+                const response = await fetch(URL);
+                json = await response.json();
+            } catch (error) {
+                console.log("There was an error: ", error)
+            }
+
+            if (json) {
+                for (let { quote, author } of json) {
+                    if (author == null || author.length == 0) {
+                        author = "N/A";
+                    }
+
+                    const movieQuoteAuth = document.createElement('p');
+                    const movieQuote = document.createElement('p');
+                    movieQuoteAuth.innerText = "Author: " + author;
+
+                    if (quote.includes("\"")) {
+                        replaceQuotes = quote.replaceAll("\"", "\'");
+                        quote = replaceQuotes;
+                    }
+
+                    movieQuote.innerText = "Quote: \n\"" + quote + "\"" + "\n\n\n";
+                    movieQuotesEl.append(movieQuoteAuth, movieQuote);
+                }
+            }
+        }
+
+        loadMoreBtn.addEventListener('click', () => {
+            loadSomeMovieQuotes(3);
+        })
+    </script>
+</body>
+
+</html>
